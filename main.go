@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -9,11 +10,16 @@ import (
 )
 
 func main() {
-	installVim()
+
+	var overwriteVimrc = flag.Bool("ovimrc", false, "Overwrite .vimrc file")
+
+	flag.Parse()
+
+	installVimrc(overwriteVimrc)
 	installVimPlug()
 }
 
-func installVim() {
+func installVimrc(ovimrc *bool) {
 	sourceVimrc, err := os.Getwd()
 	check(err)
 	sourceVimrc = sourceVimrc + "/dot-files/.vimrc"
@@ -24,8 +30,14 @@ func installVim() {
 
 	dst := os.Getenv("HOME") + "/.vimrc"
 	if _, err := os.Stat(dst); err == nil {
-		fmt.Printf("vimrc file already exists\n")
-		return
+		fmt.Println("vimrc file already exists")
+
+		if *ovimrc == false {
+			fmt.Println("overwrite not set, bailing.")
+			return
+		}
+
+		fmt.Println("overwrite set, vimrc will be overwritten.")
 	}
 
 	destination, err := os.Create(dst)
