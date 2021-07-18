@@ -1,1 +1,14 @@
 Page 15
+
+Add CLI
+Add override for files that exist (force)
+
+add vimrc specifics
+
+add git aliases
+add bash aliases
+
+install packages/syscalls
+diff-so-fancy
+
+add tests

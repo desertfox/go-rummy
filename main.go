@@ -7,7 +7,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 )
+
+var dotfilePath string
 
 func main() {
 
@@ -15,20 +18,39 @@ func main() {
 
 	flag.Parse()
 
+	installBashConfigs()
+
 	installVimrc(overwriteVimrc)
+
 	installVimPlug()
 }
 
-func installVimrc(ovimrc *bool) {
-	sourceVimrc, err := os.Getwd()
+func init() {
+	//Set cwd, make sure dot-files exists
+	fmt.Println("Init")
+	//make configurable
+	const Dotfiles = "dot-files"
+
+	cwd, err := os.Getwd()
 	check(err)
-	sourceVimrc = sourceVimrc + "/dot-files/.vimrc"
+
+	dotfilePath = strings.Join([]string{cwd, Dotfiles}, "/")
+}
+
+func installBashConfigs() {
+	// Move alias and profile
+	fmt.Println("installBashConfig")
+}
+
+func installVimrc(ovimrc *bool) {
+	const Vimrc = ".vimrc"
+	sourceVimrc := strings.Join([]string{dotfilePath, Vimrc}, "/")
 
 	source, err := os.Open(sourceVimrc)
 	check(err)
 	defer source.Close()
 
-	dst := os.Getenv("HOME") + "/.vimrc"
+	dst := strings.Join([]string{os.Getenv("HOME"), Vimrc}, "/")
 	if _, err := os.Stat(dst); err == nil {
 		fmt.Println("vimrc file already exists")
 
@@ -53,8 +75,12 @@ func installVimrc(ovimrc *bool) {
 }
 
 func installVimPlug() {
-	const VimPlugUrl = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-	var VimAutoloadPath = os.Getenv("HOME") + "/.vim/autoload/plug.vim"
+	//Move to config
+	const (
+		VimPlugUrl      = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+		VimPlugDestFile = "/.vim/autoload/plug.vim"
+	)
+	var vimAutoloadPath = strings.Join([]string{os.Getenv("HOME"), VimPlugDestFile}, "/")
 
 	resp, err := http.Get(VimPlugUrl)
 	check(err)
@@ -63,12 +89,12 @@ func installVimPlug() {
 	body, err := ioutil.ReadAll(resp.Body)
 	check(err)
 
-	if _, err := os.Stat(VimAutoloadPath); err == nil {
+	if _, err := os.Stat(vimAutoloadPath); err == nil {
 		fmt.Printf("vim plug.vim file already exists\n")
 		return
 	}
 
-	err = ioutil.WriteFile(VimAutoloadPath, body, 0644)
+	err = ioutil.WriteFile(vimAutoloadPath, body, 0644)
 	check(err)
 
 	return
