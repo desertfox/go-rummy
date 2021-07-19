@@ -69,16 +69,12 @@ func initConfigFile(source string, dest string, overwrite *bool) {
 	check(err)
 
 	fmt.Printf("Installed %v bytes:%v\n", dest, bytesCopied)
-
-	return
 }
 
 func installVimrc(ovimrc *bool) {
 	const Vimrc = ".vimrc"
 
 	initConfigFile(Vimrc, Vimrc, ovimrc)
-
-	return
 }
 
 func installVimPlug() {
@@ -89,22 +85,19 @@ func installVimPlug() {
 	)
 	var vimAutoloadPath = strings.Join([]string{os.Getenv("HOME"), VimPlugDestFile}, "/")
 
+	if _, err := os.Stat(vimAutoloadPath); err == nil {
+		fmt.Printf("vim plug.vim file already exists. bailing\n")
+		return
+	}
+
 	resp, err := http.Get(VimPlugUrl)
 	check(err)
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	check(err)
-
-	if _, err := os.Stat(vimAutoloadPath); err == nil {
-		fmt.Printf("vim plug.vim file already exists\n")
-		return
-	}
-
 	err = ioutil.WriteFile(vimAutoloadPath, body, 0644)
 	check(err)
-
-	return
 }
 
 func check(e error) {
