@@ -51,15 +51,14 @@ func initConfigFile(source string, dest string, overwrite *bool) {
 
 	dest = strings.Join([]string{os.Getenv("HOME"), dest}, "/")
 	if _, err := os.Stat(dest); err == nil {
-		//Fix vimrc name
-		fmt.Println("%v file already exists", dest)
+		fmt.Printf("%v file already exists\n", dest)
 
 		if *overwrite == false {
-			fmt.Println("%v overwrite not set, bailing.", dest)
+			fmt.Printf("%v overwrite not set, bailing.\n", dest)
 			return
 		}
 
-		fmt.Println("%v overwrite set, vimrc will be overwritten.", dest)
+		fmt.Printf("%v overwrite set, vimrc will be overwritten.\n", dest)
 	}
 
 	destinationFile, err := os.Create(dest)
@@ -69,39 +68,15 @@ func initConfigFile(source string, dest string, overwrite *bool) {
 	bytesCopied, err := io.Copy(destinationFile, sourceFile)
 	check(err)
 
-	fmt.Println("Installed %v bytes:%v", dest, bytesCopied)
+	fmt.Printf("Installed %v bytes:%v\n", dest, bytesCopied)
 
 	return
 }
 
 func installVimrc(ovimrc *bool) {
 	const Vimrc = ".vimrc"
-	sourceVimrc := strings.Join([]string{dotfilePath, Vimrc}, "/")
 
-	source, err := os.Open(sourceVimrc)
-	check(err)
-	defer source.Close()
-
-	dst := strings.Join([]string{os.Getenv("HOME"), Vimrc}, "/")
-	if _, err := os.Stat(dst); err == nil {
-		fmt.Println("vimrc file already exists")
-
-		if *ovimrc == false {
-			fmt.Println("overwrite not set, bailing.")
-			return
-		}
-
-		fmt.Println("overwrite set, vimrc will be overwritten.")
-	}
-
-	destination, err := os.Create(dst)
-	check(err)
-	defer destination.Close()
-
-	_, err = io.Copy(destination, source)
-	check(err)
-
-	fmt.Printf("Installed vimrc\n")
+	initConfigFile(Vimrc, Vimrc, ovimrc)
 
 	return
 }
