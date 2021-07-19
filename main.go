@@ -14,11 +14,14 @@ var dotfilePath string
 
 func main() {
 
-	var overwriteVimrc = flag.Bool("ovimrc", false, "Overwrite .vimrc file")
+	var (
+		overwriteVimrc     = flag.Bool("ovimrc", false, "Overwrite .vimrc file")
+		overwriteBashAlias = flag.Bool("obashalias", false, "Overwrite .bash_aliases file")
+	)
 
 	flag.Parse()
 
-	installBashConfigs()
+	installBash(overwriteBashAlias)
 
 	installVimrc(overwriteVimrc)
 
@@ -37,9 +40,19 @@ func init() {
 	dotfilePath = strings.Join([]string{cwd, Dotfiles}, "/")
 }
 
-func installBashConfigs() {
+func installBash(overwriteBashAlias *bool) {
 	// Move alias and profile
-	fmt.Println("installBashConfig")
+	fmt.Println("installBash")
+
+	installBashAliases(overwriteBashAlias)
+}
+
+func installBashAliases(overwriteBashAliases *bool) {
+	fmt.Println("installBashAliases")
+
+	const BashProfile = ".bash_aliases"
+
+	initConfigFile(BashProfile, BashProfile, overwriteBashAliases)
 }
 
 func initConfigFile(source string, dest string, overwrite *bool) {
