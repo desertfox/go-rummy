@@ -42,6 +42,38 @@ func installBashConfigs() {
 	fmt.Println("installBashConfig")
 }
 
+func initConfigFile(source string, dest string, overwrite *bool) {
+	source = strings.Join([]string{dotfilePath, source}, "/")
+
+	sourceFile, err := os.Open(source)
+	check(err)
+	defer sourceFile.Close()
+
+	dest = strings.Join([]string{os.Getenv("HOME"), dest}, "/")
+	if _, err := os.Stat(dest); err == nil {
+		//Fix vimrc name
+		fmt.Println("%v file already exists", dest)
+
+		if *overwrite == false {
+			fmt.Println("%v overwrite not set, bailing.", dest)
+			return
+		}
+
+		fmt.Println("%v overwrite set, vimrc will be overwritten.", dest)
+	}
+
+	destinationFile, err := os.Create(dest)
+	check(err)
+	defer destinationFile.Close()
+
+	bytesCopied, err := io.Copy(destinationFile, sourceFile)
+	check(err)
+
+	fmt.Println("Installed %v bytes:%v", dest, bytesCopied)
+
+	return
+}
+
 func installVimrc(ovimrc *bool) {
 	const Vimrc = ".vimrc"
 	sourceVimrc := strings.Join([]string{dotfilePath, Vimrc}, "/")
