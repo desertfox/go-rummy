@@ -10,7 +10,16 @@ import (
 	"strings"
 )
 
-var dotfilePath string
+type RummyVim struct {
+	vimrc, vimPlugUrl, vimPlugDestFile string
+}
+
+type RummyConfig struct {
+	cwd, dotfilesName, bashAliases string
+	rVim                           RummyVim
+}
+
+var Config RummyConfig
 
 func main() {
 
@@ -29,19 +38,23 @@ func main() {
 }
 
 func init() {
-	//Set cwd, make sure dot-files exists
 	fmt.Println("Init")
-	//make configurable
-	const Dotfiles = "dot-files"
+
+	var (
+		dotfiles        = "dot-files"
+		bashAliases     = ".bash_aliases"
+		vimrc           = ".vimrc"
+		vimPlugUrl      = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+		vimPlugDestFile = "/.vim/autoload/plug.vim"
+	)
 
 	cwd, err := os.Getwd()
 	check(err)
 
-	dotfilePath = strings.Join([]string{cwd, Dotfiles}, "/")
+	Config = RummyConfig{cwd, dotfiles, bashAliases, RummyVim{vimrc, vimPlugUrl, vimPlugDestFile}}
 }
 
 func installBash(overwriteBashAlias *bool) {
-	// Move alias and profile
 	fmt.Println("installBash")
 
 	installBashAliases(overwriteBashAlias)
@@ -50,13 +63,11 @@ func installBash(overwriteBashAlias *bool) {
 func installBashAliases(overwriteBashAliases *bool) {
 	fmt.Println("installBashAliases")
 
-	const BashProfile = ".bash_aliases"
-
-	initConfigFile(BashProfile, BashProfile, overwriteBashAliases)
+	initConfigFile(Config.bashAliases, Config.bashAliases, overwriteBashAliases)
 }
 
 func initConfigFile(source string, dest string, overwrite *bool) {
-	source = strings.Join([]string{dotfilePath, source}, "/")
+	source = strings.Join([]string{Config.dotfilesName, source}, "/")
 
 	sourceFile, err := os.Open(source)
 	check(err)
@@ -85,25 +96,20 @@ func initConfigFile(source string, dest string, overwrite *bool) {
 }
 
 func installVimrc(ovimrc *bool) {
-	const Vimrc = ".vimrc"
+	fmt.Println("installVimrc")
 
-	initConfigFile(Vimrc, Vimrc, ovimrc)
+	initConfigFile(Config.rVim.vimrc, Config.rVim.vimrc, ovimrc)
 }
 
 func installVimPlug() {
-	//Move to config
-	const (
-		VimPlugUrl      = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-		VimPlugDestFile = "/.vim/autoload/plug.vim"
-	)
-	var vimAutoloadPath = strings.Join([]string{os.Getenv("HOME"), VimPlugDestFile}, "/")
+	var vimAutoloadPath = strings.Join([]string{os.Getenv("HOME"), Config.rVim.vimPlugDestFile}, "/")
 
 	if _, err := os.Stat(vimAutoloadPath); err == nil {
 		fmt.Printf("vim plug.vim file already exists. bailing\n")
 		return
 	}
 
-	resp, err := http.Get(VimPlugUrl)
+	resp, err := http.Get(Config.rVim.vimPlugUrl)
 	check(err)
 	defer resp.Body.Close()
 
