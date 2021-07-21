@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 )
 
 type RummyBash struct {
@@ -31,8 +32,19 @@ var Config RummyConfig
 func main() {
 	fmt.Println("Main")
 
-	installBash()
-	installVim()
+	waitGroup := sync.WaitGroup{}
+	waitGroup.Add(2)
+
+	go func() {
+		defer waitGroup.Done()
+		installBash()
+	}()
+	go func() {
+		defer waitGroup.Done()
+		installVim()
+	}()
+
+	waitGroup.Wait()
 }
 
 func init() {
