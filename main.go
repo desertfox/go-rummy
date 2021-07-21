@@ -35,14 +35,18 @@ func main() {
 	waitGroup := sync.WaitGroup{}
 	waitGroup.Add(2)
 
-	go func() {
-		defer waitGroup.Done()
-		installBash()
-	}()
-	go func() {
-		defer waitGroup.Done()
-		installVim()
-	}()
+	tasks := map[string]func(){
+		"installBash": installBash,
+		"installVim":  installVim,
+	}
+
+	for name, method := range tasks {
+		go func() {
+			defer waitGroup.Done()
+			fmt.Println(name)
+			method()
+		}()
+	}
 
 	waitGroup.Wait()
 }
@@ -69,10 +73,7 @@ func init() {
 }
 
 func installVim() {
-	fmt.Println("installVim")
-
 	installVimrc()
-
 	installVimPlug()
 }
 
@@ -101,8 +102,6 @@ func installVimPlug() {
 }
 
 func installBash() {
-	fmt.Println("installBash")
-
 	installBashAliases(Config.rBash.overwrite)
 }
 
