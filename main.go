@@ -91,7 +91,7 @@ func installVimrc() {
 func installVimPlug() {
 	var vimAutoloadPath = strings.Join([]string{os.Getenv("HOME"), Config.rVim.vimPlugDestFile}, "/")
 
-	if _, err := os.Stat(vimAutoloadPath); err == nil {
+	if _, err := os.Stat(vimAutoloadPath); os.IsNotExist(err) {
 		fmt.Printf("vim plug.vim file already exists. bailing\n")
 		return
 	}
