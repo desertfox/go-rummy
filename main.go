@@ -27,13 +27,13 @@ type RummyConfig struct {
 	rVim              RummyVim
 }
 
-var Config RummyConfig
+var (
+	Config    RummyConfig
+	waitGroup = sync.WaitGroup{}
+)
 
 func main() {
 	fmt.Println("Main")
-
-	waitGroup := sync.WaitGroup{}
-	waitGroup.Add(2)
 
 	tasks := map[string]func(){
 		"installBash": installBash,
@@ -41,6 +41,7 @@ func main() {
 	}
 
 	for name, method := range tasks {
+		waitGroup.Add(1)
 		go func() {
 			defer waitGroup.Done()
 			fmt.Println(name)
