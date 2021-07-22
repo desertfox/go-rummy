@@ -70,6 +70,10 @@ func init() {
 			vimPlugDestFile: ".vim/autoload/plug.vim",
 			overwrite:       flag.Bool("ovrc", false, "Overwrite .vimrc file")}}
 
+	if _, err := os.Stat(strings.Join([]string{Config.cwd, Config.dotfilesName}, "/")); os.IsNotExist(err) {
+		fmt.Println("Unable to find dotfiles")
+	}
+
 	flag.Parse()
 }
 
