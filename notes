@@ -12,3 +12,7 @@ install packages/syscalls
 diff-so-fancy
 
 add tests
+
+add templating for email
+
+add dependency injection, go-wire
