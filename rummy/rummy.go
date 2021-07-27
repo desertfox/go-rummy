@@ -7,18 +7,16 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/go-rummy/rummy/config"
 )
 
 var (
-	Config config.RummyConfig
+	Config RummyConfig
 )
 
-func GoRummy() config.RummyConfig {
+func GoRummy() RummyConfig {
 	fmt.Println("goRummy")
 
-	Config = config.NewConfig()
+	Config = NewConfig()
 
 	tasks := map[string]func(){
 		"installBash": installBash,
