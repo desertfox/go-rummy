@@ -9,9 +9,7 @@ import (
 	"strings"
 )
 
-var (
-	Config RummyConfig
-)
+var Config RummyConfig
 
 func GoRummy() RummyConfig {
 	fmt.Println("goRummy")
