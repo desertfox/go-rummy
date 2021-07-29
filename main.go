@@ -1,13 +1,9 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/go-rummy/rummy"
+	"github.com/go-rummy/pkg"
 )
 
 func main() {
-	fmt.Println("Main")
-
 	rummy.GoRummy()
 }
