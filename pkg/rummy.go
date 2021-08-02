@@ -2,55 +2,29 @@ package rummy
 
 import (
 	"os"
+	//	"fmt"
 
 	"github.com/go-rummy/pkg/plugins"
+	"github.com/go-rummy/pkg/types"
 )
 
-var cwd string
-
-type localConfig struct {
-	Cwd, DotfilesName string
-}
-
-type RummyPlugin interface {
-	Install()
-}
-
-type RummyConfig struct {
-	plugins []RummyPlugin
-	base    *localConfig
-}
-
-func init() {
+func GoRummy() {
 	path, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
-	cwd = path
+
+	rb := types.NewRepoBase(path)
+
+	plugins := []types.RummyPlugin{plugins.NewBashPlugin(), plugins.NewVimPlugin()}
+
+	rc := rb.NewRummyConfig(plugins)
+
+	installPlugins(rc)
 }
 
-func initLocalConfig() *localConfig {
-	config := &localConfig{
-		Cwd:          cwd,
-		DotfilesName: "dot-files",
-	}
-	return config
-}
-
-func GoRummy() {
-
-	plugins := []RummyPlugin{plugins.NewBashPlugin(), plugins.NewVimPlugin()}
-
-	app := RummyConfig{
-		plugins: plugins,
-		base:    initLocalConfig(),
-	}
-
-	app.installPlugins()
-}
-
-func (rc RummyConfig) installPlugins() {
-	for _, plugin := range rc.plugins {
+func installPlugins(rc *types.RummyConfig) {
+	for _, plugin := range rc.Plugins {
 		plugin.Install()
 	}
 }
