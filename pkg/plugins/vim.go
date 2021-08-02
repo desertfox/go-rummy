@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/go-rummy/pkg/types"
 )
 
 var (
@@ -14,58 +16,49 @@ var (
 )
 
 type VimPlugin struct {
-	fileNames []string
-	overwrite bool
+	Data types.PluginData
 }
 
 func NewVimPlugin() *VimPlugin {
-	v := &VimPlugin{}
-
-	v.SetPluginFiles()
-
-	fmt.Printf("NewVim %v\n", v)
-
-	return v
-}
-
-func (v *VimPlugin) GetPluginName() string {
-	return "vim"
-}
-
-func (v *VimPlugin) SetPluginFiles() []string {
-
-	v.fileNames = []string{".vimrc"}
-
-	fmt.Printf("SetPluginFiles: %v\n", v)
-
-	return v.fileNames
-}
-
-func (v *VimPlugin) Install() {
-	fmt.Printf("Install: %v\n", v)
-
-	v.installVimrc()
-	v.installVimPlug()
-}
-
-func (v *VimPlugin) installVimrc() {
-
-	fmt.Printf("installVimrc: %v\n", v)
-
-	for _, file := range v.fileNames {
-		mp := &PluginMove{
-			sourcedir:  "dot-files",
-			sourcefile: file,
-			destdir:    os.Getenv("HOME"),
-			dest:       file,
-			overwrite:  v.overwrite,
-		}
-
-		mp.Move()
+	p := &VimPlugin{
+		Data: types.PluginData{
+			Name:      "vim",
+			FileNames: []string{".vimc"},
+			Overwrite: false,
+		},
 	}
+
+	fmt.Printf("NewVim %v\n", p)
+
+	return p
 }
 
-func (v *VimPlugin) installVimPlug() {
+func (p VimPlugin) Install() {
+	fmt.Printf("Install: %v\n", p)
+
+	p.installVimrc()
+	p.installVimPlug()
+}
+
+func (p VimPlugin) installVimrc() {
+
+	fmt.Printf("installVimrc: %v\n", p)
+	/*
+		for _, file := range v.fileNames {
+			mp := &PluginMove{
+				sourcedir:  "dot-files",
+				sourcefile: file,
+				destdir:    os.Getenv("HOME"),
+				dest:       file,
+				overwrite:  v.overwrite,
+			}
+
+			mp.Move()
+		}
+	*/
+}
+
+func (p VimPlugin) installVimPlug() {
 	var VimAutoloadPath = strings.Join([]string{os.Getenv("HOME"), vimPlugDestFile}, "/")
 
 	if _, err := os.Stat(VimAutoloadPath); os.IsNotExist(err) {

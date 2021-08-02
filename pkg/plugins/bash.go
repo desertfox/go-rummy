@@ -2,55 +2,48 @@ package plugins
 
 import (
 	"fmt"
-	"os"
+	//	"os"
+
+	"github.com/go-rummy/pkg/types"
 )
 
 type BashPlugin struct {
-	fileNames []string
-	overwrite bool
+	Data types.PluginData
 }
 
 func NewBashPlugin() *BashPlugin {
-	bashPlugin := &BashPlugin{}
-
-	bashPlugin.SetPluginFiles()
-
-	fmt.Printf("NewBash %v\n", bashPlugin)
-
-	return bashPlugin
-}
-
-func (b BashPlugin) GetPluginName() string {
-	return "bash"
-}
-
-func (b *BashPlugin) SetPluginFiles() []string {
-
-	b.fileNames = []string{".bash_aliases"}
-
-	fmt.Printf("SetPluginFiles: %v\n", b)
-
-	return b.fileNames
-}
-
-func (b *BashPlugin) Install() {
-	fmt.Printf("Install: %v\n", b)
-	b.installBashAliases()
-}
-
-func (b *BashPlugin) installBashAliases() {
-	fmt.Printf("installBashA: %v\n", b)
-
-	for _, file := range b.fileNames {
-		mp := &PluginMove{
-			sourcedir:  "dot-files",
-			sourcefile: file,
-			destdir:    os.Getenv("HOME"),
-			dest:       file,
-			overwrite:  b.overwrite,
-		}
-
-		mp.Move()
+	p := &BashPlugin{
+		Data: types.PluginData{
+			Name:      "bash",
+			FileNames: []string{".bash_aliases"},
+			Overwrite: false,
+		},
 	}
+
+	fmt.Printf("NewBash %v\n", p)
+
+	return p
+}
+
+func (p BashPlugin) Install() {
+	fmt.Printf("Install: %v\n", p)
+	p.installBashAliases()
+}
+
+func (p BashPlugin) installBashAliases() {
+	fmt.Printf("installBashA: %v\n", p)
+	/*
+		for _, file := range b.fileNames {
+			mp := &PluginMove{
+				sourcedir:  "dot-files",
+				sourcefile: file,
+				destdir:    os.Getenv("HOME"),
+				dest:       file,
+				overwrite:  b.overwrite,
+			}
+
+			mp.Move()
+		}
+	*/
 
 }
