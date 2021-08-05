@@ -1,30 +1,21 @@
 package rummy
 
 import (
-	"os"
-	//	"fmt"
-
 	"github.com/go-rummy/pkg/plugins"
 	"github.com/go-rummy/pkg/types"
 )
 
-func GoRummy() {
-	path, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
+func GoRummy(wd string) {
 
-	rb := types.NewRepoBase(path)
+	config := types.NewConfig(wd)
 
-	plugins := []types.RummyPlugin{plugins.NewBashPlugin(), plugins.NewVimPlugin()}
+	plugins := []types.Installer{plugins.NewBashPlugin(*config), plugins.NewVimPlugin(*config)}
 
-	rc := rb.NewRummyConfig(plugins)
-
-	installPlugins(rc)
+	installPlugins(plugins)
 }
 
-func installPlugins(rc *types.RummyConfig) {
-	for _, plugin := range rc.Plugins {
+func installPlugins(plugins []types.Installer) {
+	for _, plugin := range plugins {
 		plugin.Install()
 	}
 }

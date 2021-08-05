@@ -2,22 +2,27 @@ package plugins
 
 import (
 	"fmt"
-	//	"os"
+	"os"
+	"path/filepath"
 
 	"github.com/go-rummy/pkg/types"
 )
 
 type BashPlugin struct {
-	Data types.PluginData
+	Data   types.PluginData
+	Dest   string
+	Config types.Config
 }
 
-func NewBashPlugin() *BashPlugin {
+func NewBashPlugin(config types.Config) *BashPlugin {
 	p := &BashPlugin{
 		Data: types.PluginData{
 			Name:      "bash",
 			FileNames: []string{".bash_aliases"},
 			Overwrite: false,
 		},
+		Dest:   os.Getenv("HOME"),
+		Config: config,
 	}
 
 	fmt.Printf("NewBash %v\n", p)
@@ -25,25 +30,21 @@ func NewBashPlugin() *BashPlugin {
 	return p
 }
 
-func (p BashPlugin) Install() {
+func (p *BashPlugin) Install() {
 	fmt.Printf("Install: %v\n", p)
+
 	p.installBashAliases()
 }
 
-func (p BashPlugin) installBashAliases() {
+func (p *BashPlugin) installBashAliases() {
 	fmt.Printf("installBashA: %v\n", p)
-	/*
-		for _, file := range b.fileNames {
-			mp := &PluginMove{
-				sourcedir:  "dot-files",
-				sourcefile: file,
-				destdir:    os.Getenv("HOME"),
-				dest:       file,
-				overwrite:  b.overwrite,
-			}
 
-			mp.Move()
-		}
-	*/
+	for _, file := range p.Data.FileNames {
+
+		sourceFile := filepath.Join(p.Config.Cwd, p.Config.SourceFilesDir, file)
+		destFile := filepath.Join(p.Dest, file)
+
+		Move(sourceFile, destFile, p.Data.Overwrite)
+	}
 
 }

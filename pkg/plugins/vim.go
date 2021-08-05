@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
+	"path/filepath"
 
 	"github.com/go-rummy/pkg/types"
 )
@@ -16,16 +16,20 @@ var (
 )
 
 type VimPlugin struct {
-	Data types.PluginData
+	Data   types.PluginData
+	Dest   string
+	Config types.Config
 }
 
-func NewVimPlugin() *VimPlugin {
+func NewVimPlugin(config types.Config) *VimPlugin {
 	p := &VimPlugin{
 		Data: types.PluginData{
 			Name:      "vim",
-			FileNames: []string{".vimc"},
+			FileNames: []string{".vimrc"},
 			Overwrite: false,
 		},
+		Dest:   os.Getenv("HOME"),
+		Config: config,
 	}
 
 	fmt.Printf("NewVim %v\n", p)
@@ -41,25 +45,19 @@ func (p VimPlugin) Install() {
 }
 
 func (p VimPlugin) installVimrc() {
-
 	fmt.Printf("installVimrc: %v\n", p)
-	/*
-		for _, file := range v.fileNames {
-			mp := &PluginMove{
-				sourcedir:  "dot-files",
-				sourcefile: file,
-				destdir:    os.Getenv("HOME"),
-				dest:       file,
-				overwrite:  v.overwrite,
-			}
 
-			mp.Move()
-		}
-	*/
+	for _, file := range p.Data.FileNames {
+
+		sourceFile := filepath.Join(p.Config.Cwd, p.Config.SourceFilesDir, file)
+		destFile := filepath.Join(p.Dest, file)
+
+		Move(sourceFile, destFile, p.Data.Overwrite)
+	}
 }
 
 func (p VimPlugin) installVimPlug() {
-	var VimAutoloadPath = strings.Join([]string{os.Getenv("HOME"), vimPlugDestFile}, "/")
+	var VimAutoloadPath = filepath.Join(p.Dest, vimPlugDestFile)
 
 	if _, err := os.Stat(VimAutoloadPath); os.IsNotExist(err) {
 		fmt.Printf("vim plug.vim file already exists. bailing\n")

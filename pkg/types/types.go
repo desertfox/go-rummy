@@ -1,15 +1,11 @@
 package types
 
-type RummyConfig struct {
-	Plugins []RummyPlugin
-	RB      *RepoBase
+type Config struct {
+	Cwd            string
+	SourceFilesDir string
 }
 
-type RepoBase struct {
-	Cwd, SourceFilesDir string
-}
-
-type RummyPlugin interface {
+type Installer interface {
 	Install()
 }
 
@@ -17,14 +13,11 @@ type PluginData struct {
 	Name      string
 	FileNames []string
 	Overwrite bool
+	Config    Config
 }
 
-func (rb *RepoBase) NewRummyConfig(pd []RummyPlugin) *RummyConfig {
-	return &RummyConfig{Plugins: pd, RB: rb}
-}
-
-func NewRepoBase(path string) *RepoBase {
-	return &RepoBase{
+func NewConfig(path string) *Config {
+	return &Config{
 		Cwd:            path,
 		SourceFilesDir: "dot-files",
 	}
