@@ -5,10 +5,6 @@ type Config struct {
 	SourceFilesDir string
 }
 
-type Installer interface {
-	Install()
-}
-
 type PluginData struct {
 	Name      string
 	FileNames []string
@@ -16,9 +12,13 @@ type PluginData struct {
 	Config    Config
 }
 
-func NewConfig(path string) *Config {
+type Installer interface {
+	Install()
+}
+
+func NewConfig(path string, dotFiles string) *Config {
 	return &Config{
 		Cwd:            path,
-		SourceFilesDir: "dot-files",
+		SourceFilesDir: dotFiles,
 	}
 }

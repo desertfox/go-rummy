@@ -32,8 +32,6 @@ func NewVimPlugin(config types.Config) *VimPlugin {
 		Config: config,
 	}
 
-	fmt.Printf("NewVim %v\n", p)
-
 	return p
 }
 
@@ -45,10 +43,7 @@ func (p VimPlugin) Install() {
 }
 
 func (p VimPlugin) installVimrc() {
-	fmt.Printf("installVimrc: %v\n", p)
-
 	for _, file := range p.Data.FileNames {
-
 		sourceFile := filepath.Join(p.Config.Cwd, p.Config.SourceFilesDir, file)
 		destFile := filepath.Join(p.Dest, file)
 

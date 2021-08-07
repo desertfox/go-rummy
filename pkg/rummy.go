@@ -5,9 +5,8 @@ import (
 	"github.com/go-rummy/pkg/types"
 )
 
-func GoRummy(wd string) {
-
-	config := types.NewConfig(wd)
+func Go(wd string, dotFiles string) {
+	config := types.NewConfig(wd, dotFiles)
 
 	plugins := []types.Installer{plugins.NewBashPlugin(*config), plugins.NewVimPlugin(*config)}
 

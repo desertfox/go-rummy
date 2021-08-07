@@ -25,8 +25,6 @@ func NewBashPlugin(config types.Config) *BashPlugin {
 		Config: config,
 	}
 
-	fmt.Printf("NewBash %v\n", p)
-
 	return p
 }
 
@@ -37,14 +35,10 @@ func (p *BashPlugin) Install() {
 }
 
 func (p *BashPlugin) installBashAliases() {
-	fmt.Printf("installBashA: %v\n", p)
-
 	for _, file := range p.Data.FileNames {
-
 		sourceFile := filepath.Join(p.Config.Cwd, p.Config.SourceFilesDir, file)
 		destFile := filepath.Join(p.Dest, file)
 
 		Move(sourceFile, destFile, p.Data.Overwrite)
 	}
-
 }

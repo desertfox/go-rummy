@@ -11,6 +11,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	dotFiles := "dot-files"
 
-	rummy.GoRummy(wd)
+	rummy.Go(wd, dotFiles)
 }

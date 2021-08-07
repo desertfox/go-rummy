@@ -7,7 +7,7 @@ import (
 )
 
 func Move(sourceFile string, destFile string, overwrite bool) {
-	fmt.Printf("sourceFile: %v, destFile:%v, overwrite:%v\n", sourceFile, destFile, overwrite)
+	fmt.Printf("sourceFile:%v, destFile:%v, overwrite:%v\n", sourceFile, destFile, overwrite)
 
 	sf, err := os.Open(sourceFile)
 	Check(err)
