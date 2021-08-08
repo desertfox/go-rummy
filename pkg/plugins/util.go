@@ -3,6 +3,8 @@ package plugins
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
+	"net/http"
 	"os"
 )
 
@@ -32,6 +34,24 @@ func Move(sourceFile string, destFile string, overwrite bool) {
 	Check(err)
 
 	fmt.Printf("Installed %v bytes:%v\n", destFile, bytesCopied)
+}
+
+func DownloadFile(url string, dest string) {
+	fmt.Printf("url:%v, dest:%v\n", url, dest)
+	if _, err := os.Stat(dest); os.IsNotExist(err) {
+		fmt.Printf("url:%v, dest:%v, File already exists. Bailing.\n", url, dest)
+		return
+	}
+
+	resp, err := http.Get(url)
+	Check(err)
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	Check(err)
+
+	err = ioutil.WriteFile(dest, body, 0644)
+	Check(err)
 }
 
 func Check(e error) {

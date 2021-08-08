@@ -2,8 +2,6 @@ package plugins
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"path/filepath"
 
@@ -52,19 +50,7 @@ func (p VimPlugin) installVimrc() {
 }
 
 func (p VimPlugin) installVimPlug() {
-	var VimAutoloadPath = filepath.Join(p.Dest, vimPlugDestFile)
+	vimPlugPath := filepath.Join(p.Dest, vimPlugDestFile)
 
-	if _, err := os.Stat(VimAutoloadPath); os.IsNotExist(err) {
-		fmt.Printf("vim plug.vim file already exists. bailing\n")
-		return
-	}
-
-	resp, err := http.Get(vimPlugUrl)
-	Check(err)
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	Check(err)
-	err = ioutil.WriteFile(VimAutoloadPath, body, 0644)
-	Check(err)
+	DownloadFile(vimPlugUrl, vimPlugPath)
 }
