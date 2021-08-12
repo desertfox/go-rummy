@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/go-rummy/pkg"
+	p "github.com/go-rummy/pkg/plugins"
 )
 
 var (
@@ -32,7 +33,9 @@ func main() {
 	}
 
 	if install == "all" {
-		rummy.Go(dotFiles, []string{"all"})
+		Plugins := []rummy.Installer{p.NewBashPlugin(dotFiles), p.NewVimPlugin(dotFiles)}
+
+		rummy.Go(Plugins)
 	}
 
 }
