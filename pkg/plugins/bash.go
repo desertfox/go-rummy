@@ -3,29 +3,19 @@ package plugins
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/go-rummy/pkg/types"
 )
 
 type BashPlugin struct {
-	Data   types.PluginData
-	Dest   string
-	Config types.Config
+	*types.PluginData
 }
 
-func NewBashPlugin(config types.Config) *BashPlugin {
-	p := &BashPlugin{
-		Data: types.PluginData{
-			Name:      "bash",
-			FileNames: []string{".bash_aliases"},
-			Overwrite: false,
-		},
-		Dest:   os.Getenv("HOME"),
-		Config: config,
-	}
+func NewBashPlugin(sourceDir string) types.Installer {
 
-	return p
+	plugin := types.NewPlugin("bash", []string{".bash_aliases"}, false, os.Getenv("HOME"), sourceDir)
+
+	return &BashPlugin{plugin}
 }
 
 func (p *BashPlugin) Install() {
@@ -35,10 +25,10 @@ func (p *BashPlugin) Install() {
 }
 
 func (p *BashPlugin) installBashAliases() {
-	for _, file := range p.Data.FileNames {
-		sourceFile := filepath.Join(p.Config.Cwd, p.Config.SourceFilesDir, file)
-		destFile := filepath.Join(p.Dest, file)
+	for _, file := range p.FileNames {
+		sourceFile := p.BuildSourceWithFile(file)
+		destFile := p.BuildDestWithFile(file)
 
-		Move(sourceFile, destFile, p.Data.Overwrite)
+		Move(sourceFile, destFile, p.Overwrite)
 	}
 }

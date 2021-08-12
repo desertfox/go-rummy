@@ -14,23 +14,14 @@ var (
 )
 
 type VimPlugin struct {
-	Data   types.PluginData
-	Dest   string
-	Config types.Config
+	*types.PluginData
 }
 
-func NewVimPlugin(config types.Config) *VimPlugin {
-	p := &VimPlugin{
-		Data: types.PluginData{
-			Name:      "vim",
-			FileNames: []string{".vimrc"},
-			Overwrite: false,
-		},
-		Dest:   os.Getenv("HOME"),
-		Config: config,
-	}
+func NewVimPlugin(sourceDir string) types.Installer {
 
-	return p
+	plugin := types.NewPlugin("vim", []string{".vimrc"}, false, os.Getenv("HOME"), sourceDir)
+
+	return &VimPlugin{plugin}
 }
 
 func (p VimPlugin) Install() {
@@ -41,11 +32,11 @@ func (p VimPlugin) Install() {
 }
 
 func (p VimPlugin) installVimrc() {
-	for _, file := range p.Data.FileNames {
-		sourceFile := filepath.Join(p.Config.Cwd, p.Config.SourceFilesDir, file)
+	for _, file := range p.FileNames {
+		sourceFile := filepath.Join(p.SourceFilesDir, file)
 		destFile := filepath.Join(p.Dest, file)
 
-		Move(sourceFile, destFile, p.Data.Overwrite)
+		Move(sourceFile, destFile, p.Overwrite)
 	}
 }
 

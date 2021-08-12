@@ -1,19 +1,21 @@
 package rummy
 
 import (
-	"github.com/go-rummy/pkg/plugins"
-	"github.com/go-rummy/pkg/types"
+	p "github.com/go-rummy/pkg/plugins"
 )
 
-func Go(wd string, dotFiles string) {
-	config := types.NewConfig(wd, dotFiles)
-
-	plugins := []types.Installer{plugins.NewBashPlugin(*config), plugins.NewVimPlugin(*config)}
-
-	installPlugins(plugins)
+type Installer interface {
+	Install()
 }
 
-func installPlugins(plugins []types.Installer) {
+func Go(sourceDir string, plugins []string) {
+
+	Plugins := []Installer{p.NewBashPlugin(sourceDir), p.NewVimPlugin(sourceDir)}
+
+	installPlugins(Plugins)
+}
+
+func installPlugins(plugins []Installer) {
 	for _, plugin := range plugins {
 		plugin.Install()
 	}
