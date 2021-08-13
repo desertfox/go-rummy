@@ -1,22 +1,23 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/go-rummy/pkg"
 	p "github.com/go-rummy/pkg/plugins"
+	flag "github.com/spf13/pflag"
 )
 
 var (
-	install         string
+	install         []string
 	dotFiles        string
 	defaultDotFiles = "dot-files"
 )
 
 func init() {
-	flag.StringVar(&install, "i", "all", "Install")
+	flag.StringSliceVar(&install, "i", []string{"all"}, "Install")
 	flag.StringVar(&dotFiles, "df", defaultDotFiles, "Source path/dir for dot files")
 }
 
@@ -32,10 +33,23 @@ func main() {
 		dotFiles = filepath.Join(wd, defaultDotFiles)
 	}
 
-	if install == "all" {
-		Plugins := []rummy.Installer{p.NewBashPlugin(dotFiles), p.NewVimPlugin(dotFiles)}
+	list := make(map[string]rummy.Installer)
+	list["vim"] = p.NewVimPlugin(dotFiles)
+	list["bash"] = p.NewBashPlugin(dotFiles)
 
-		rummy.Go(Plugins)
+	if install[0] == "all" {
+		plugins := make([]rummy.Installer, 0, len(list))
+		for _, v := range list {
+			plugins = append(plugins, v)
+		}
+
+		rummy.Go(plugins)
+	} else {
+		plugins := make([]rummy.Installer, 0, len(install))
+		for _, v := range install {
+			plugins = append(plugins, list[v])
+		}
+		rummy.Go(plugins)
 	}
 
 }
