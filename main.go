@@ -13,6 +13,7 @@ var (
 	install         []string
 	dotFiles        string
 	defaultDotFiles = "dot-files"
+	list            = make(map[string]rummy.Installer)
 )
 
 func init() {
@@ -23,6 +24,22 @@ func init() {
 func main() {
 	flag.Parse()
 
+	buildList()
+
+	plugins := buildPlugins()
+
+	rummy.Go(plugins)
+
+}
+
+func buildList() {
+	buildDotfiles()
+
+	list["vim"] = p.NewVimPlugin(dotFiles)
+	list["bash"] = p.NewBashPlugin(dotFiles)
+}
+
+func buildDotfiles() {
 	if dotFiles == defaultDotFiles {
 		wd, err := os.Getwd()
 		if err != nil {
@@ -31,24 +48,25 @@ func main() {
 
 		dotFiles = filepath.Join(wd, defaultDotFiles)
 	}
+}
 
-	list := make(map[string]rummy.Installer)
-	list["vim"] = p.NewVimPlugin(dotFiles)
-	list["bash"] = p.NewBashPlugin(dotFiles)
+func buildPlugins() *[]rummy.Installer {
+	plugins := make([]rummy.Installer, 0, len(list))
 
 	if install[0] == "all" {
-		plugins := make([]rummy.Installer, 0, len(list))
 		for _, v := range list {
 			plugins = append(plugins, v)
 		}
 
-		rummy.Go(plugins)
 	} else {
-		plugins := make([]rummy.Installer, 0, len(install))
 		for _, v := range install {
-			plugins = append(plugins, list[v])
+			if _, exists := list[v]; exists {
+				plugins = append(plugins, list[v])
+			} else {
+				panic("No plugin found for " + v)
+			}
 		}
-		rummy.Go(plugins)
 	}
 
+	return &plugins
 }
