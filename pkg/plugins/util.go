@@ -6,34 +6,36 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/go-rummy/pkg/types"
 )
 
-func Move(sourceFile string, destFile string, overwrite bool) {
-	fmt.Printf("sourceFile:%v, destFile:%v, overwrite:%v\n", sourceFile, destFile, overwrite)
+func Move(ftm types.FileToMove) {
+	fmt.Printf("FileToMove:%#v\n", ftm)
 
-	sf, err := os.Open(sourceFile)
+	sf, err := os.Open(ftm.From)
 	Check(err)
 	defer sf.Close()
 
-	if _, err := os.Stat(destFile); err == nil {
-		fmt.Printf("%v file already exists\n", destFile)
+	if _, err := os.Stat(ftm.To); err == nil {
+		fmt.Printf("%v file already exists\n", ftm.To)
 
-		if overwrite == false {
-			fmt.Printf("%v Overwrite not set, bailing.\n", destFile)
+		if ftm.Overwrite == false {
+			fmt.Printf("%v Overwrite not set, bailing.\n", ftm.To)
 			return
 		}
 
-		fmt.Printf("%v Overwrite set, vimrc will be overwritten.\n", destFile)
+		fmt.Printf("%v Overwrite set, will be overwritten.\n", ftm.To)
 	}
 
-	df, err := os.Create(destFile)
+	df, err := os.Create(ftm.To)
 	Check(err)
 	defer df.Close()
 
 	bytesCopied, err := io.Copy(df, sf)
 	Check(err)
 
-	fmt.Printf("Installed %v bytes:%v\n", destFile, bytesCopied)
+	fmt.Printf("Installed %v bytes:%v\n", ftm.To, bytesCopied)
 }
 
 func DownloadFile(url string, dest string) {

@@ -13,7 +13,6 @@ var (
 	install         []string
 	dotFiles        string
 	defaultDotFiles = "dot-files"
-	list            = make(map[string]rummy.Installer)
 )
 
 func init() {
@@ -24,33 +23,38 @@ func init() {
 func main() {
 	flag.Parse()
 
-	buildList()
+	sd := buildSourceDir(dotFiles, defaultDotFiles)
 
-	plugins := buildPlugins()
+	ap := buildAvailablePluginList(sd)
+
+	plugins := selectPlugins(ap)
 
 	rummy.Go(plugins)
 
 }
 
-func buildList() {
-	buildDotfiles()
-
-	list["vim"] = p.NewVimPlugin(dotFiles)
-	list["bash"] = p.NewBashPlugin(dotFiles)
-}
-
-func buildDotfiles() {
-	if dotFiles == defaultDotFiles {
+func buildSourceDir(df, ddf string) string {
+	if df == ddf {
 		wd, err := os.Getwd()
 		if err != nil {
 			panic(err)
 		}
 
-		dotFiles = filepath.Join(wd, defaultDotFiles)
+		return filepath.Join(wd, ddf)
 	}
+
+	return df
 }
 
-func buildPlugins() *[]rummy.Installer {
+func buildAvailablePluginList(sourceDir string) map[string]rummy.Installer {
+	list := make(map[string]rummy.Installer)
+	list["vim"] = p.NewVimPlugin(sourceDir, os.Getenv("HOME"))
+	list["bash"] = p.NewBashPlugin(sourceDir, os.Getenv("HOME"))
+
+	return list
+}
+
+func selectPlugins(list map[string]rummy.Installer) *[]rummy.Installer {
 	plugins := make([]rummy.Installer, 0, len(list))
 
 	if install[0] == "all" {
