@@ -12,15 +12,15 @@ type BashPlugin struct {
 
 func NewBashPlugin(sourceDir string, destDir string) types.Installer {
 	plugin := &types.PluginData{
-		Name: "bash",
+		Name:           "bash",
 		SourceFilesDir: sourceDir,
-		DestFilesDir: destDir,
+		DestFilesDir:   destDir,
 	}
 
 	bp := &BashPlugin{plugin}
 
-	bp.AddFileToMove( ".bash_aliases", ".bash_aliases", false )
-	
+	bp.AddFileToMove(".bash_aliases", ".bash_aliases", false)
+
 	return bp
 }
 

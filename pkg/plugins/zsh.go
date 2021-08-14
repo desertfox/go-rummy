@@ -19,15 +19,15 @@ type ZshPlugin struct {
 
 func NewZshPlugin(sourceDir string, destDir string) types.Installer {
 	plugin := &types.PluginData{
-		Name: "zsh",
+		Name:           "zsh",
 		SourceFilesDir: sourceDir,
-		DestFilesDir: destDir,
+		DestFilesDir:   destDir,
 	}
 
 	zp := &BashPlugin{plugin}
 
-	zp.AddFileToMove( ".zshrc", ".zshrc", false )
-	
+	zp.AddFileToMove(".zshrc", ".zshrc", false)
+
 	return zp
 }
 
@@ -36,7 +36,7 @@ func (p *ZshPlugin) Install() {
 	p.installZshrc()
 }
 
-func ( p *ZshPlugin ) installOhMyZSH() {
+func (p *ZshPlugin) installOhMyZSH() {
 	if _, err := os.Stat(zshPath); err == nil {
 		fmt.Printf("%v file already exists\n", zshPath)
 		return
@@ -51,7 +51,7 @@ func ( p *ZshPlugin ) installOhMyZSH() {
 	Check(err)
 }
 
-func ( p *ZshPlugin ) installZshrc() {
+func (p *ZshPlugin) installZshrc() {
 	for _, ftm := range p.Files {
 		Move(ftm)
 	}

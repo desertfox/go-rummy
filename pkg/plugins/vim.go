@@ -20,14 +20,14 @@ type VimPlugin struct {
 func NewVimPlugin(sourceDir string, destDir string) types.Installer {
 
 	plugin := &types.PluginData{
-		Name: "vim",
+		Name:           "vim",
 		SourceFilesDir: sourceDir,
-		DestFilesDir: destDir,
+		DestFilesDir:   destDir,
 	}
 
 	vp := &VimPlugin{plugin}
 
-	vp.AddFileToMove( ".vimrc", ".vimrc", false )
+	vp.AddFileToMove(".vimrc", ".vimrc", false)
 
 	return vp
 }
@@ -47,7 +47,7 @@ func (p VimPlugin) installVimrc() {
 
 func (p VimPlugin) installVimPlug() {
 	vimPlugPath := filepath.Join(p.DestFilesDir, vimPlugDestFile)
-	
+
 	if _, err := os.Stat(vimPlugPath); err == nil {
 		fmt.Printf("%v file already exists\n", vimPlugPath)
 		return

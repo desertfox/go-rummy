@@ -6,13 +6,13 @@ type PluginData struct {
 	Name           string
 	Files          []FileToMove
 	SourceFilesDir string
-	DestFilesDir string
+	DestFilesDir   string
 }
 
 type FileToMove struct {
-	From string
-	To string
-	Overwrite      bool
+	From      string
+	To        string
+	Overwrite bool
 }
 
 type Installer interface {
@@ -29,8 +29,8 @@ func (p *PluginData) BuildDestWithFile(file string) string {
 
 func (p *PluginData) AddFileToMove(from string, to string, overwrite bool) {
 	p.Files = append(p.Files, FileToMove{
-		From: p.BuildSourceWithFile(from),
-		To: p.BuildDestWithFile(to),
+		From:      p.BuildSourceWithFile(from),
+		To:        p.BuildDestWithFile(to),
 		Overwrite: overwrite,
 	})
 }
