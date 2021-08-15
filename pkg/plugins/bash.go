@@ -1,17 +1,11 @@
 package plugins
 
-import (
-	"fmt"
-
-	"github.com/go-rummy/pkg/types"
-)
-
 type BashPlugin struct {
-	*types.PluginData
+	*PluginData
 }
 
-func NewBashPlugin(sourceDir string, destDir string) types.Installer {
-	plugin := &types.PluginData{
+func NewBashPlugin(sourceDir string, destDir string) Installer {
+	plugin := &PluginData{
 		Name:           "bash",
 		SourceFilesDir: sourceDir,
 		DestFilesDir:   destDir,
@@ -25,13 +19,9 @@ func NewBashPlugin(sourceDir string, destDir string) types.Installer {
 }
 
 func (p *BashPlugin) Install() {
-	fmt.Printf("Install: %v\n", p)
-
 	p.installBashAliases()
 }
 
 func (p *BashPlugin) installBashAliases() {
-	for _, ftm := range p.Files {
-		Move(ftm)
-	}
+	p.MoveFiles()
 }

@@ -5,8 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-
-	"github.com/go-rummy/pkg/types"
 )
 
 var (
@@ -14,14 +12,13 @@ var (
 )
 
 type ZshPlugin struct {
-	*types.PluginData
-	ConfigFile string
+	*PluginData
 }
 
-func NewZshPlugin(sourceDir string, destDir string) types.Installer {
+func NewZshPlugin(sourceDir string, destDir string) Installer {
 	sourceDir = filepath.Join(sourceDir, "zsh")
 
-	plugin := &types.PluginData{
+	plugin := &PluginData{
 		Name:           "zsh",
 		SourceFilesDir: sourceDir,
 		DestFilesDir:   destDir,
@@ -56,7 +53,5 @@ func (p *ZshPlugin) installOhMyZSH() {
 }
 
 func (p *ZshPlugin) installZshrc() {
-	for _, ftm := range p.Files {
-		Move(ftm)
-	}
+	p.MoveFiles()
 }

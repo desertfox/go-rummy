@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-
-	"github.com/go-rummy/pkg/types"
 )
 
 var (
@@ -14,12 +12,12 @@ var (
 )
 
 type VimPlugin struct {
-	*types.PluginData
+	*PluginData
 }
 
-func NewVimPlugin(sourceDir string, destDir string) types.Installer {
+func NewVimPlugin(sourceDir string, destDir string) Installer {
 
-	plugin := &types.PluginData{
+	plugin := &PluginData{
 		Name:           "vim",
 		SourceFilesDir: sourceDir,
 		DestFilesDir:   destDir,
@@ -40,9 +38,7 @@ func (p VimPlugin) Install() {
 }
 
 func (p VimPlugin) installVimrc() {
-	for _, ftm := range p.Files {
-		Move(ftm)
-	}
+	p.MoveFiles()
 }
 
 func (p VimPlugin) installVimPlug() {
