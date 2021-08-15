@@ -15,6 +15,12 @@ type FileToMove struct {
 	Overwrite bool
 }
 
+type FileToDownload struct {
+	Url       string
+	To        string
+	Overwrite bool
+}
+
 type Installer interface {
 	Install()
 }

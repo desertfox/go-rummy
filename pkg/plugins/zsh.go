@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/go-rummy/pkg/types"
 )
@@ -18,6 +19,8 @@ type ZshPlugin struct {
 }
 
 func NewZshPlugin(sourceDir string, destDir string) types.Installer {
+	sourceDir = filepath.Join(sourceDir, "zsh")
+
 	plugin := &types.PluginData{
 		Name:           "zsh",
 		SourceFilesDir: sourceDir,
@@ -27,6 +30,7 @@ func NewZshPlugin(sourceDir string, destDir string) types.Installer {
 	zp := &BashPlugin{plugin}
 
 	zp.AddFileToMove(".zshrc", ".zshrc", false)
+	zp.AddFileToMove(".p10k.zsh", ".p10k.zsh", false)
 
 	return zp
 }
