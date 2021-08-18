@@ -18,7 +18,6 @@ func (p *PluginData) BuildDestWithFile(file string) string {
 }
 
 func (p *PluginData) AddFileToMove(from string, to string, overwrite bool) {
-	fmt.Printf("%#v", p.Files)
 	p.Files = append(p.Files, FileToMove{
 		From:      p.BuildSourceWithFile(from),
 		To:        p.BuildDestWithFile(to),

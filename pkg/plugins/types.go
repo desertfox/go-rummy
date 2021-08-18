@@ -1,24 +1,14 @@
 package plugins
 
 type PluginData struct {
-	Name string
-	FilesArray
+	Name           string
+	Files          []FileToMove
 	SourceFilesDir string
 	DestFilesDir   string
 }
 
-type FilesArray struct {
-	Files []FileToMove
-}
-
 type FileToMove struct {
 	From      string
-	To        string
-	Overwrite bool
-}
-
-type FileToDownload struct {
-	Url       string
 	To        string
 	Overwrite bool
 }

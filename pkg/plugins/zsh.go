@@ -2,13 +2,15 @@ package plugins
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 )
 
 var (
-	zshPath = ".oh-my-zsh"
+	zshPath      = ".oh-my-zsh"
+	powerlineurl = "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
 )
 
 type ZshPlugin struct {
@@ -43,13 +45,20 @@ func (p *ZshPlugin) installOhMyZSH() {
 		return
 	}
 
-	cmd := exec.Command("/bin/sh", "install.sh")
+	dir, err := ioutil.TempDir("dir", "prefix")
+	Check(err)
 
-	err := cmd.Start()
+	DownloadFile("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh", dir)
+
+	cmd := exec.Command("/bin/sh", filepath.Join(dir, "install.sh"))
+
+	err = cmd.Start()
 	Check(err)
 
 	err = cmd.Wait()
 	Check(err)
+
+	defer os.RemoveAll(dir)
 }
 
 func (p *ZshPlugin) installZshrc() {
