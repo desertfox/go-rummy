@@ -17,7 +17,7 @@ type ZshPlugin struct {
 	*PluginData
 }
 
-func NewZshPlugin(sourceDir string, destDir string) Installer {
+func NewZshPlugin(sourceDir string, destDir string, overwrite bool) Installer {
 	sourceDir = filepath.Join(sourceDir, "zsh")
 
 	plugin := &PluginData{
@@ -28,8 +28,8 @@ func NewZshPlugin(sourceDir string, destDir string) Installer {
 
 	zp := &BashPlugin{plugin}
 
-	zp.AddFileToMove(".zshrc", ".zshrc", false)
-	zp.AddFileToMove(".p10k.zsh", ".p10k.zsh", false)
+	zp.AddFileToMove(".zshrc", ".zshrc", overwrite)
+	zp.AddFileToMove(".p10k.zsh", ".p10k.zsh", overwrite)
 
 	return zp
 }

@@ -15,7 +15,7 @@ type VimPlugin struct {
 	*PluginData
 }
 
-func NewVimPlugin(sourceDir string, destDir string) Installer {
+func NewVimPlugin(sourceDir string, destDir string, overwrite bool) Installer {
 
 	plugin := &PluginData{
 		Name:           "vim",
@@ -25,7 +25,7 @@ func NewVimPlugin(sourceDir string, destDir string) Installer {
 
 	vp := &VimPlugin{plugin}
 
-	vp.AddFileToMove(".vimrc", ".vimrc", false)
+	vp.AddFileToMove(".vimrc", ".vimrc", overwrite)
 
 	return vp
 }

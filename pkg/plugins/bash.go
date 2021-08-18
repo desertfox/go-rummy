@@ -4,7 +4,7 @@ type BashPlugin struct {
 	*PluginData
 }
 
-func NewBashPlugin(sourceDir string, destDir string) Installer {
+func NewBashPlugin(sourceDir string, destDir string, overwrite bool) Installer {
 	plugin := &PluginData{
 		Name:           "bash",
 		SourceFilesDir: sourceDir,
@@ -13,7 +13,7 @@ func NewBashPlugin(sourceDir string, destDir string) Installer {
 
 	bp := &BashPlugin{plugin}
 
-	bp.AddFileToMove(".bash_aliases", ".bash_aliases", false)
+	bp.AddFileToMove(".bash_aliases", ".bash_aliases", overwrite)
 
 	return bp
 }

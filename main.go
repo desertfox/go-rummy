@@ -11,14 +11,17 @@ import (
 )
 
 var (
-	install         []string
-	dotFiles        string
+	install   []string
+	dotFiles  string
+	overwrite bool
+
 	defaultDotFiles = "dot-files"
 )
 
 func init() {
 	flag.StringSliceVar(&install, "i", []string{"all"}, "Install")
 	flag.StringVar(&dotFiles, "df", defaultDotFiles, "Source path/dir for dot files")
+	flag.BoolVar(&overwrite, "o", false, "Source path/dir for dot files")
 }
 
 func main() {
@@ -26,7 +29,7 @@ func main() {
 
 	sd := buildSourceDir(dotFiles, defaultDotFiles)
 
-	ap := buildAvailablePluginList(sd)
+	ap := buildAvailablePluginList(sd, overwrite)
 
 	plugins := selectPlugins(ap)
 
@@ -47,12 +50,12 @@ func buildSourceDir(df, ddf string) string {
 	return df
 }
 
-func buildAvailablePluginList(sourceDir string) map[string]rummy.Installer {
+func buildAvailablePluginList(sourceDir string, overwrite bool) map[string]rummy.Installer {
 	list := make(map[string]rummy.Installer)
 
-	list["vim"] = p.NewVimPlugin(sourceDir, os.Getenv("HOME"))
-	list["zsh"] = p.NewZshPlugin(sourceDir, os.Getenv("HOME"))
-	list["bash"] = p.NewBashPlugin(sourceDir, os.Getenv("HOME"))
+	list["vim"] = p.NewVimPlugin(sourceDir, os.Getenv("HOME"), overwrite)
+	list["zsh"] = p.NewZshPlugin(sourceDir, os.Getenv("HOME"), overwrite)
+	list["bash"] = p.NewBashPlugin(sourceDir, os.Getenv("HOME"), overwrite)
 
 	return list
 }
