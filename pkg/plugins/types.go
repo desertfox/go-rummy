@@ -2,13 +2,13 @@ package plugins
 
 type PluginData struct {
 	Name           string
-	Files          []FileToMove
+	Configs        []ConfigToCreate
 	SourceFilesDir string
 	DestFilesDir   string
 }
 
-type FileToMove struct {
-	From      string
+type ConfigToCreate struct {
+	Source    *string
 	To        string
 	Overwrite bool
 }

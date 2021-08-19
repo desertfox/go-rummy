@@ -2,61 +2,50 @@ package plugins
 
 import (
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 )
 
-func (p *PluginData) BuildSourceWithFile(file string) string {
-	return filepath.Join(p.SourceFilesDir, file)
-}
-
 func (p *PluginData) BuildDestWithFile(file string) string {
 	return filepath.Join(p.DestFilesDir, file)
 }
 
-func (p *PluginData) AddFileToMove(from string, to string, overwrite bool) {
-	p.Files = append(p.Files, FileToMove{
-		From:      p.BuildSourceWithFile(from),
+func (p *PluginData) AddConfigToCreate(source *string, to string, overwrite bool) {
+	p.Configs = append(p.Configs, ConfigToCreate{
+		Source:    source,
 		To:        p.BuildDestWithFile(to),
 		Overwrite: overwrite,
 	})
 }
 
-func (p *PluginData) MoveFiles() {
-	for _, ftm := range p.Files {
-		ftm.Move()
+func (p *PluginData) CreateConfigs() {
+	for _, ctc := range p.Configs {
+		ctc.Create()
 	}
 }
 
-func (file FileToMove) Move() {
-	fmt.Printf("FileToMove:%#v\n", file)
+func (ctc ConfigToCreate) Create() {
+	if _, err := os.Stat(ctc.To); err == nil {
+		fmt.Printf("%v ctc already exists\n", ctc.To)
 
-	sf, err := os.Open(file.From)
-	Check(err)
-	defer sf.Close()
-
-	if _, err := os.Stat(file.To); err == nil {
-		fmt.Printf("%v file already exists\n", file.To)
-
-		if file.Overwrite == false {
-			fmt.Printf("%v Overwrite not set, bailing.\n", file.To)
+		if ctc.Overwrite == false {
+			fmt.Printf("%v Overwrite not set, bailing.\n", ctc.To)
 			return
 		}
 
-		fmt.Printf("%v Overwrite set, will be overwritten.\n", file.To)
+		fmt.Printf("%v Overwrite set, will be overwritten.\n", ctc.To)
 	}
 
-	df, err := os.Create(file.To)
+	f, err := os.Create(ctc.To)
 	Check(err)
-	defer df.Close()
+	defer f.Close()
 
-	bytesCopied, err := io.Copy(df, sf)
+	bytesCopied, err := f.WriteString(*ctc.Source)
 	Check(err)
 
-	fmt.Printf("Installed %v bytes:%v\n", file.To, bytesCopied)
+	fmt.Printf("Installed %v bytes:%v\n", ctc.To, bytesCopied)
 }
 
 func DownloadFile(url string, dest string) {

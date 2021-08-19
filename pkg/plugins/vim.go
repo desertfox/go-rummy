@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,6 +10,11 @@ import (
 var (
 	vimPlugUrl      = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 	vimPlugDestFile = ".vim/autoload/plug.vim"
+)
+
+var (
+	//go:embed dot-files/vim/.vimrc
+	vimrc string
 )
 
 type VimPlugin struct {
@@ -25,20 +31,18 @@ func NewVimPlugin(sourceDir string, destDir string, overwrite bool) Installer {
 
 	vp := &VimPlugin{plugin}
 
-	vp.AddFileToMove(".vimrc", ".vimrc", overwrite)
+	vp.AddConfigToCreate(&vimrc, ".vimrc", overwrite)
 
 	return vp
 }
 
 func (p VimPlugin) Install() {
-	fmt.Printf("Install: %v\n", p)
-
 	p.installVimrc()
 	p.installVimPlug()
 }
 
 func (p VimPlugin) installVimrc() {
-	p.MoveFiles()
+	p.CreateConfigs()
 }
 
 func (p VimPlugin) installVimPlug() {

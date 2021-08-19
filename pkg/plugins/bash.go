@@ -1,5 +1,12 @@
 package plugins
 
+import _ "embed"
+
+var (
+	//go:embed dot-files/bash/.bash_aliases
+	bashAliases string
+)
+
 type BashPlugin struct {
 	*PluginData
 }
@@ -13,7 +20,7 @@ func NewBashPlugin(sourceDir string, destDir string, overwrite bool) Installer {
 
 	bp := &BashPlugin{plugin}
 
-	bp.AddFileToMove(".bash_aliases", ".bash_aliases", overwrite)
+	bp.AddConfigToCreate(&bashAliases, ".bash_aliases", overwrite)
 
 	return bp
 }
@@ -23,5 +30,5 @@ func (p *BashPlugin) Install() {
 }
 
 func (p *BashPlugin) installBashAliases() {
-	p.MoveFiles()
+	p.CreateConfigs()
 }

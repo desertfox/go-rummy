@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	_ "embed"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,6 +12,13 @@ import (
 var (
 	zshPath      = ".oh-my-zsh"
 	powerlineurl = "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+)
+
+var (
+	//go:embed dot-files/zsh/.zshrc
+	zshrc string
+	//go:embed dot-files/zsh/.p10k.zsh
+	p10kzsh string
 )
 
 type ZshPlugin struct {
@@ -28,8 +36,8 @@ func NewZshPlugin(sourceDir string, destDir string, overwrite bool) Installer {
 
 	zp := &BashPlugin{plugin}
 
-	zp.AddFileToMove(".zshrc", ".zshrc", overwrite)
-	zp.AddFileToMove(".p10k.zsh", ".p10k.zsh", overwrite)
+	zp.AddConfigToCreate(&zshrc, ".zshrc", overwrite)
+	zp.AddConfigToCreate(&p10kzsh, ".p10k.zsh", overwrite)
 
 	return zp
 }
@@ -62,5 +70,5 @@ func (p *ZshPlugin) installOhMyZSH() {
 }
 
 func (p *ZshPlugin) installZshrc() {
-	p.MoveFiles()
+	p.CreateConfigs()
 }
