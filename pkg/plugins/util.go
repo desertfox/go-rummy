@@ -28,7 +28,7 @@ func (p *PluginData) CreateConfigs() {
 
 func (ctc ConfigToCreate) Create() {
 	if _, err := os.Stat(ctc.To); err == nil {
-		fmt.Printf("%v ctc already exists\n", ctc.To)
+		fmt.Printf("%v already exists\n", ctc.To)
 
 		if ctc.Overwrite == false {
 			fmt.Printf("%v Overwrite not set, bailing.\n", ctc.To)

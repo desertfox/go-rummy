@@ -34,7 +34,7 @@ func NewZshPlugin(sourceDir string, destDir string, overwrite bool) Installer {
 		DestFilesDir:   destDir,
 	}
 
-	zp := &BashPlugin{plugin}
+	zp := &ZshPlugin{plugin}
 
 	zp.AddConfigToCreate(&zshrc, ".zshrc", overwrite)
 	zp.AddConfigToCreate(&p10kzsh, ".p10k.zsh", overwrite)
@@ -48,8 +48,9 @@ func (p *ZshPlugin) Install() {
 }
 
 func (p *ZshPlugin) installOhMyZSH() {
-	if _, err := os.Stat(zshPath); err == nil {
-		fmt.Printf("%v file already exists\n", zshPath)
+	fullPath := filepath.Join(os.Getenv("HOME"), zshPath)
+	if _, err := os.Stat(fullPath); err == nil {
+		fmt.Printf("%v file already exists\n", fullPath)
 		return
 	}
 
