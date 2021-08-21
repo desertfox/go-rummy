@@ -53,5 +53,5 @@ func (p VimPlugin) installVimPlug() {
 		return
 	}
 
-	DownloadFile(vimPlugUrl, vimPlugPath)
+	//DownloadFile(vimPlugUrl, vimPlugPath)
 }

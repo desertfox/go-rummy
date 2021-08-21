@@ -54,20 +54,22 @@ func (p *ZshPlugin) installOhMyZSH() {
 		return
 	}
 
-	dir, err := ioutil.TempDir("dir", "prefix")
+	f, err := ioutil.TempFile("", "tmp")
+	Check(err)
+	defer f.Close()
+
+	installByte := DownloadFile("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
+
+	_, err = f.Write(installByte)
 	Check(err)
 
-	DownloadFile("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh", dir)
-
-	cmd := exec.Command("/bin/sh", filepath.Join(dir, "install.sh"))
+	cmd := exec.Command("/bin/sh", f.Name())
 
 	err = cmd.Start()
 	Check(err)
 
 	err = cmd.Wait()
 	Check(err)
-
-	defer os.RemoveAll(dir)
 }
 
 func (p *ZshPlugin) installZshrc() {

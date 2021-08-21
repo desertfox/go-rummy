@@ -27,15 +27,13 @@ func (p *PluginData) CreateConfigs() {
 }
 
 func (ctc ConfigToCreate) Create() {
-	if _, err := os.Stat(ctc.To); err == nil {
+	if _, err := os.Stat(ctc.To); !os.IsNotExist(err) {
 		fmt.Printf("%v already exists\n", ctc.To)
 
 		if ctc.Overwrite == false {
 			fmt.Printf("%v Overwrite not set, bailing.\n", ctc.To)
 			return
 		}
-
-		fmt.Printf("%v Overwrite set, will be overwritten.\n", ctc.To)
 	}
 
 	f, err := os.Create(ctc.To)
@@ -48,12 +46,8 @@ func (ctc ConfigToCreate) Create() {
 	fmt.Printf("Installed %v bytes:%v\n", ctc.To, bytesCopied)
 }
 
-func DownloadFile(url string, dest string) {
-	fmt.Printf("url:%v, dest:%v\n", url, dest)
-	if _, err := os.Stat(dest); os.IsNotExist(err) {
-		fmt.Printf("url:%v, dest:%v, File already exists. Bailing.\n", url, dest)
-		return
-	}
+func DownloadFile(url string) []byte {
+	fmt.Printf("url:%v\n", url)
 
 	resp, err := http.Get(url)
 	Check(err)
@@ -62,8 +56,7 @@ func DownloadFile(url string, dest string) {
 	body, err := ioutil.ReadAll(resp.Body)
 	Check(err)
 
-	err = ioutil.WriteFile(dest, body, 0644)
-	Check(err)
+	return body
 }
 
 func Check(e error) {
