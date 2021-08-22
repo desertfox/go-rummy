@@ -24,15 +24,12 @@ func TestAddConfigToCreate(t *testing.T) {
 	overwrite := false
 	destDir := "testDir"
 
-	want := &PluginData{
-		Configs:      []ConfigToCreate{{&source, filepath.Join(destDir, to), overwrite}},
-		DestFilesDir: destDir,
-	}
+	want := ConfigToCreate{&source, filepath.Join(destDir, to), overwrite}
 
 	got := &PluginData{DestFilesDir: destDir}
 	got.AddConfigToCreate(&source, to, overwrite)
 
-	if got.Configs[0] != want.Configs[0] {
+	if got.Configs[0] != want {
 		t.Errorf("Did not add config to create correclty got:%v want:%v", got, want)
 	}
 
