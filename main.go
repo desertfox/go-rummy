@@ -53,6 +53,7 @@ func buildSourceDir(df, ddf string) string {
 func buildAvailablePluginList(sourceDir string, overwrite bool) map[string]rummy.Installer {
 	list := make(map[string]rummy.Installer)
 
+	list["git"] = p.NewGitPlugin(sourceDir, os.Getenv("HOME"), overwrite)
 	list["vim"] = p.NewVimPlugin(sourceDir, os.Getenv("HOME"), overwrite)
 	list["zsh"] = p.NewZshPlugin(sourceDir, os.Getenv("HOME"), overwrite)
 	list["bash"] = p.NewBashPlugin(sourceDir, os.Getenv("HOME"), overwrite)
