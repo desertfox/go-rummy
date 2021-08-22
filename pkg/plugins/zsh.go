@@ -46,7 +46,7 @@ func (p *ZshPlugin) Install() {
 
 func (p *ZshPlugin) installOhMyZSH() {
 	fullPath := filepath.Join(os.Getenv("HOME"), zshPath)
-	if _, err := os.Stat(fullPath); !os.IsNotExist(err) {
+	if _, err := os.Stat(fullPath); err == nil {
 		fmt.Printf("%v file already exists\n", fullPath)
 		return
 	}
