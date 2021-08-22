@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 )
 
+//Make private?
 func (p *PluginData) BuildDestWithFile(file string) string {
 	return filepath.Join(p.DestFilesDir, file)
 }
