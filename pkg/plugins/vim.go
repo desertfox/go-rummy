@@ -21,12 +21,11 @@ type VimPlugin struct {
 	*PluginData
 }
 
-func NewVimPlugin(sourceDir string, destDir string, overwrite bool) Installer {
+func NewVimPlugin(destDir string, overwrite bool) Installer {
 
 	plugin := &PluginData{
-		Name:           "vim",
-		SourceFilesDir: sourceDir,
-		DestFilesDir:   destDir,
+		Name:         "vim",
+		DestFilesDir: destDir,
 	}
 
 	vp := &VimPlugin{plugin}

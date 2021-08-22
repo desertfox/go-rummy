@@ -25,21 +25,18 @@ type ZshPlugin struct {
 	*PluginData
 }
 
-func NewZshPlugin(sourceDir string, destDir string, overwrite bool) Installer {
-	sourceDir = filepath.Join(sourceDir, "zsh")
-
-	plugin := &PluginData{
-		Name:           "zsh",
-		SourceFilesDir: sourceDir,
-		DestFilesDir:   destDir,
+func NewZshPlugin(destDir string, overwrite bool) Installer {
+	p := &ZshPlugin{
+		&PluginData{
+			Name:         "zsh",
+			DestFilesDir: destDir,
+		},
 	}
 
-	zp := &ZshPlugin{plugin}
+	p.AddConfigToCreate(&zshrc, ".zshrc", overwrite)
+	p.AddConfigToCreate(&p10kzsh, ".p10k.zsh", overwrite)
 
-	zp.AddConfigToCreate(&zshrc, ".zshrc", overwrite)
-	zp.AddConfigToCreate(&p10kzsh, ".p10k.zsh", overwrite)
-
-	return zp
+	return p
 }
 
 func (p *ZshPlugin) Install() {

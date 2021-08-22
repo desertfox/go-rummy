@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"path/filepath"
 
 	flag "github.com/spf13/pflag"
 
@@ -12,24 +11,20 @@ import (
 
 var (
 	install   []string
-	dotFiles  string
 	overwrite bool
-
-	defaultDotFiles = "dot-files"
 )
 
 func init() {
 	flag.StringSliceVar(&install, "i", []string{"all"}, "Install")
-	flag.StringVar(&dotFiles, "df", defaultDotFiles, "Source path/dir for dot files")
 	flag.BoolVar(&overwrite, "o", false, "Source path/dir for dot files")
 }
 
 func main() {
 	flag.Parse()
 
-	sd := buildSourceDir(dotFiles, defaultDotFiles)
+	home := os.Getenv("HOME")
 
-	ap := buildAvailablePluginList(sd, overwrite)
+	ap := buildAvailablePluginList(home, overwrite)
 
 	plugins := selectPlugins(ap)
 
@@ -37,26 +32,13 @@ func main() {
 
 }
 
-func buildSourceDir(df, ddf string) string {
-	if df == ddf {
-		wd, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-
-		return filepath.Join(wd, ddf)
-	}
-
-	return df
-}
-
-func buildAvailablePluginList(sourceDir string, overwrite bool) map[string]rummy.Installer {
+func buildAvailablePluginList(destDir string, overwrite bool) map[string]rummy.Installer {
 	list := make(map[string]rummy.Installer)
 
-	list["git"] = p.NewGitPlugin(sourceDir, os.Getenv("HOME"), overwrite)
-	list["vim"] = p.NewVimPlugin(sourceDir, os.Getenv("HOME"), overwrite)
-	list["zsh"] = p.NewZshPlugin(sourceDir, os.Getenv("HOME"), overwrite)
-	list["bash"] = p.NewBashPlugin(sourceDir, os.Getenv("HOME"), overwrite)
+	list["git"] = p.NewGitPlugin(destDir, overwrite)
+	list["vim"] = p.NewVimPlugin(destDir, overwrite)
+	list["zsh"] = p.NewZshPlugin(destDir, overwrite)
+	list["bash"] = p.NewBashPlugin(destDir, overwrite)
 
 	return list
 }

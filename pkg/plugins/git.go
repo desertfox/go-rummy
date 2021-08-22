@@ -11,12 +11,11 @@ type GitPlugin struct {
 	*PluginData
 }
 
-func NewGitPlugin(sourceDir string, destDir string, overwrite bool) Installer {
+func NewGitPlugin(destDir string, overwrite bool) Installer {
 
 	plugin := &PluginData{
-		Name:           "git",
-		SourceFilesDir: sourceDir,
-		DestFilesDir:   destDir,
+		Name:         "git",
+		DestFilesDir: destDir,
 	}
 
 	zp := &GitPlugin{plugin}

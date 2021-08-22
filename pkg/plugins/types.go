@@ -1,10 +1,9 @@
 package plugins
 
 type PluginData struct {
-	Name           string
-	Configs        []ConfigToCreate
-	SourceFilesDir string
-	DestFilesDir   string
+	Name         string
+	Configs      []ConfigToCreate
+	DestFilesDir string
 }
 
 type ConfigToCreate struct {

@@ -11,11 +11,10 @@ type BashPlugin struct {
 	*PluginData
 }
 
-func NewBashPlugin(sourceDir string, destDir string, overwrite bool) Installer {
+func NewBashPlugin(destDir string, overwrite bool) Installer {
 	plugin := &PluginData{
-		Name:           "bash",
-		SourceFilesDir: sourceDir,
-		DestFilesDir:   destDir,
+		Name:         "bash",
+		DestFilesDir: destDir,
 	}
 
 	bp := &BashPlugin{plugin}
