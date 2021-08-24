@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
-	"path/filepath"
 )
 
 var (
@@ -45,12 +44,19 @@ func (p VimPlugin) installVimrc() {
 }
 
 func (p VimPlugin) installVimPlug() {
-	vimPlugPath := filepath.Join(p.DestFilesDir, vimPlugDestFile)
+	vimPlugPath := p.BuildDestWithFile(vimPlugDestFile)
 
 	if _, err := os.Stat(vimPlugPath); err == nil {
 		fmt.Printf("%v file already exists\n", vimPlugPath)
 		return
 	}
 
-	//DownloadFile(vimPlugUrl, vimPlugPath)
+	installByte := DownloadFile(vimPlugUrl)
+
+	f, err := os.Create(vimPlugPath)
+	Check(err)
+	defer f.Close()
+
+	_, err = f.Write(installByte)
+	Check(err)
 }

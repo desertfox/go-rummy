@@ -1,9 +1,9 @@
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-export ZSH="/home/pi/.oh-my-zsh"
+export ZSH="/home/$USER/.oh-my-zsh"
 export PATH=$PATH:/usr/local/go/bin/
-export PATH=$PATH:/home/pi/diff-so-fancy
+export PATH=$PATH:/home/$USER/diff-so-fancy
 export GOPATH=$HOME/code/go
 export PATH=$PATH:$GOPATH/bin
 

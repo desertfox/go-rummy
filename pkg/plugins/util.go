@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 )
 
-//Make private?
 func (p *PluginData) BuildDestWithFile(file string) string {
 	return filepath.Join(p.DestFilesDir, file)
 }
@@ -31,7 +30,7 @@ func (ctc ConfigToCreate) Create() {
 	if _, err := os.Stat(ctc.To); err == nil {
 		fmt.Printf("%v already exists\n", ctc.To)
 
-		if ctc.Overwrite == false {
+		if !ctc.Overwrite {
 			fmt.Printf("%v Overwrite not set, bailing.\n", ctc.To)
 			return
 		}

@@ -11,7 +11,7 @@ import (
 
 var (
 	zshPath      = ".oh-my-zsh"
-	powerlineurl = "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+	powerlineurl = "https://github.com/romkatv/powerlevel10k.git"
 )
 
 var (
@@ -42,10 +42,11 @@ func NewZshPlugin(destDir string, overwrite bool) Installer {
 func (p *ZshPlugin) Install() {
 	p.installOhMyZSH()
 	p.installZshrc()
+	p.installPowerline()
 }
 
 func (p *ZshPlugin) installOhMyZSH() {
-	fullPath := filepath.Join(os.Getenv("HOME"), zshPath)
+	fullPath := p.BuildDestWithFile(zshPath)
 	if _, err := os.Stat(fullPath); err == nil {
 		fmt.Printf("%v file already exists\n", fullPath)
 		return
@@ -71,4 +72,23 @@ func (p *ZshPlugin) installOhMyZSH() {
 
 func (p *ZshPlugin) installZshrc() {
 	p.CreateConfigs()
+}
+
+func (p *ZshPlugin) installPowerline() {
+	fullPath := p.BuildDestWithFile(zshPath)
+	fullPath = filepath.Join(fullPath, "/custom/themes/powerlevel10k")
+
+	if _, err := os.Stat(fullPath); err == nil {
+		fmt.Printf("%v file already exists\n", fullPath)
+		return
+	}
+
+	cmd := exec.Command("/usr/bin/git", "clone", "--depth=1", powerlineurl, fullPath)
+
+	err := cmd.Start()
+	Check(err)
+
+	err = cmd.Wait()
+	Check(err)
+
 }
