@@ -34,6 +34,8 @@ func (ctc ConfigToCreate) Create() {
 			fmt.Printf("%v Overwrite not set, bailing.\n", ctc.To)
 			return
 		}
+
+		ctc.Backup()
 	}
 
 	f, err := os.Create(ctc.To)
@@ -44,6 +46,12 @@ func (ctc ConfigToCreate) Create() {
 	Check(err)
 
 	fmt.Printf("Installed %v bytes:%v\n", ctc.To, bytesCopied)
+}
+
+func (ctc ConfigToCreate) Backup() {
+	backupName := ctc.To + "-backup"
+	err := os.Rename(ctc.To, backupName)
+	Check(err)
 }
 
 func DownloadFile(url string) []byte {
