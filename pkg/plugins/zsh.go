@@ -40,16 +40,20 @@ func NewZshPlugin(destDir string, overwrite bool) Installer {
 }
 
 func (p *ZshPlugin) Install() {
-	p.installOhMyZSH()
+	err := p.installOhMyZSH()
+	if err != nil {
+		return
+	}
+
 	p.installZshrc()
 	p.installPowerline()
 }
 
-func (p *ZshPlugin) installOhMyZSH() {
+func (p *ZshPlugin) installOhMyZSH() error {
 	fullPath := p.BuildDestWithFile(zshPath)
 	if _, err := os.Stat(fullPath); err == nil {
 		fmt.Printf("%v file already exists\n", fullPath)
-		return
+		return nil
 	}
 
 	f, err := ioutil.TempFile("", "tmp")
@@ -67,7 +71,11 @@ func (p *ZshPlugin) installOhMyZSH() {
 	Check(err)
 
 	err = cmd.Wait()
-	Check(err)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *ZshPlugin) installZshrc() {
