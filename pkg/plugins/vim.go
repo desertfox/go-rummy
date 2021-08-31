@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"strings"
 )
 
 var (
@@ -50,6 +51,12 @@ func (p VimPlugin) installVimPlug() {
 		fmt.Printf("%v file already exists\n", vimPlugPath)
 		return
 	}
+
+	pathSlice := strings.Split(vimPlugPath, "/")
+	path := strings.Join(pathSlice[0:len(pathSlice)-1], "/")
+
+	err := os.MkdirAll(path, os.ModePerm)
+	Check(err)
 
 	installByte := DownloadFile(vimPlugUrl)
 
