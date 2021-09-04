@@ -62,30 +62,17 @@ func (ctc ConfigToCreate) Create() error {
 }
 
 func (ctc ConfigToCreate) Backup() error {
-	backupName := ctc.To + "-backup"
-	err := os.Rename(ctc.To, backupName)
-	if err != nil {
-		return err
-	}
-	return nil
+	return os.Rename(ctc.To, ctc.To+"-backup")
 }
 
-func DownloadFile(url string) []byte {
+func DownloadFile(url string) ([]byte, error) {
 	fmt.Printf("url:%v\n", url)
 
 	resp, err := http.Get(url)
-	Check(err)
+	if err != nil {
+		return nil, err
+	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	Check(err)
-
-	return body
-}
-
-func Check(e error) {
-	if e != nil {
-		fmt.Printf("%vn", e)
-		panic(e)
-	}
+	return ioutil.ReadAll(resp.Body)
 }

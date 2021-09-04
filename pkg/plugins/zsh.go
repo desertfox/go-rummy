@@ -61,7 +61,10 @@ func (p *ZshPlugin) installOhMyZSH(destDir string) error {
 	}
 	defer f.Close()
 
-	installByte := DownloadFile("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
+	installByte, err := DownloadFile("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
+	if err != nil {
+		return err
+	}
 
 	_, err = f.Write(installByte)
 	if err != nil {

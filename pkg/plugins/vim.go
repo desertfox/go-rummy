@@ -58,7 +58,10 @@ func (p VimPlugin) installVimPlug(destDir string) error {
 		return err
 	}
 
-	installByte := DownloadFile(vimPlugUrl)
+	installByte, err := DownloadFile(vimPlugUrl)
+	if err != nil {
+		return err
+	}
 
 	f, err := os.Create(vimPlugPath)
 	if err != nil {
