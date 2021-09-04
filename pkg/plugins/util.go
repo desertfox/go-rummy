@@ -8,50 +8,66 @@ import (
 	"path/filepath"
 )
 
-func (p *PluginData) BuildDestWithFile(file string) string {
-	return filepath.Join(p.DestFilesDir, file)
+func (p *PluginData) buildDestPath(destPath string, file string) string {
+	return filepath.Join(destPath, file)
 }
 
 func (p *PluginData) AddConfigToCreate(source *string, to string, overwrite bool) {
 	p.Configs = append(p.Configs, ConfigToCreate{
 		Source:    source,
-		To:        p.BuildDestWithFile(to),
+		To:        to,
 		Overwrite: overwrite,
 	})
 }
 
-func (p *PluginData) CreateConfigs() {
+func (p *PluginData) CreateConfigs() error {
 	for _, ctc := range p.Configs {
-		ctc.Create()
+		err := ctc.Create()
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func (ctc ConfigToCreate) Create() {
+func (ctc ConfigToCreate) Create() error {
 	if _, err := os.Stat(ctc.To); err == nil {
 		fmt.Printf("%v already exists\n", ctc.To)
-
 		if !ctc.Overwrite {
 			fmt.Printf("%v Overwrite not set, bailing.\n", ctc.To)
-			return
+			return nil
 		}
 
-		ctc.Backup()
+		err := ctc.Backup()
+		if err != nil {
+			return err
+		}
 	}
 
 	f, err := os.Create(ctc.To)
-	Check(err)
+	if err != nil {
+		return err
+	}
 	defer f.Close()
 
 	bytesCopied, err := f.WriteString(*ctc.Source)
-	Check(err)
+	if err != nil {
+		return err
+	}
 
 	fmt.Printf("Installed %v bytes:%v\n", ctc.To, bytesCopied)
+
+	return nil
 }
 
-func (ctc ConfigToCreate) Backup() {
+func (ctc ConfigToCreate) Backup() error {
 	backupName := ctc.To + "-backup"
 	err := os.Rename(ctc.To, backupName)
-	Check(err)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func DownloadFile(url string) []byte {

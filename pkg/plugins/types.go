@@ -1,9 +1,8 @@
 package plugins
 
 type PluginData struct {
-	Name         string
-	Configs      []ConfigToCreate
-	DestFilesDir string
+	Name    string
+	Configs []ConfigToCreate
 }
 
 type ConfigToCreate struct {
@@ -13,5 +12,5 @@ type ConfigToCreate struct {
 }
 
 type Installer interface {
-	Install()
+	Install(destDir string, overwrite bool) error
 }

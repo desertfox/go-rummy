@@ -11,20 +11,14 @@ type GitPlugin struct {
 	*PluginData
 }
 
-func NewGitPlugin(destDir string, overwrite bool) Installer {
-
-	plugin := &PluginData{
-		Name:         "git",
-		DestFilesDir: destDir,
-	}
-
-	zp := &GitPlugin{plugin}
-
-	zp.AddConfigToCreate(&gitconfig, ".gitconfig", overwrite)
-
-	return zp
+func NewGitPlugin() Installer {
+	return &GitPlugin{&PluginData{
+		Name: "git",
+	}}
 }
 
-func (p *GitPlugin) Install() {
-	p.CreateConfigs()
+func (p *GitPlugin) Install(destDir string, overwrite bool) error {
+	p.AddConfigToCreate(&gitconfig, p.buildDestPath(destDir, ".gitconfig"), overwrite)
+
+	return p.CreateConfigs()
 }

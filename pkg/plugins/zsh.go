@@ -25,78 +25,78 @@ type ZshPlugin struct {
 	*PluginData
 }
 
-func NewZshPlugin(destDir string, overwrite bool) Installer {
-	p := &ZshPlugin{
-		&PluginData{
-			Name:         "zsh",
-			DestFilesDir: destDir,
-		},
-	}
-
-	p.AddConfigToCreate(&zshrc, ".zshrc", overwrite)
-	p.AddConfigToCreate(&p10kzsh, ".p10k.zsh", overwrite)
-
-	return p
+func NewZshPlugin() Installer {
+	return &ZshPlugin{&PluginData{
+		Name: "zsh",
+	}}
 }
 
-func (p *ZshPlugin) Install() {
-	err := p.installOhMyZSH()
+func (p *ZshPlugin) Install(destDir string, overwrite bool) error {
+	p.AddConfigToCreate(&zshrc, p.buildDestPath(destDir, ".zshrc"), overwrite)
+	p.AddConfigToCreate(&p10kzsh, p.buildDestPath(destDir, ".p10k.zsh"), overwrite)
+
+	err := p.installOhMyZSH(destDir)
 	if err != nil {
-		return
+		return err
 	}
 
-	p.installZshrc()
-	p.installPowerline()
+	err = p.installZshrc()
+	if err != nil {
+		return err
+	}
+
+	return p.installPowerline(destDir)
 }
 
-func (p *ZshPlugin) installOhMyZSH() error {
-	fullPath := p.BuildDestWithFile(zshPath)
+func (p *ZshPlugin) installOhMyZSH(destDir string) error {
+	fullPath := p.buildDestPath(destDir, zshPath)
 	if _, err := os.Stat(fullPath); err == nil {
 		fmt.Printf("%v file already exists\n", fullPath)
 		return nil
 	}
 
 	f, err := ioutil.TempFile("", "tmp")
-	Check(err)
+	if err != nil {
+		return err
+	}
 	defer f.Close()
 
 	installByte := DownloadFile("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
 
 	_, err = f.Write(installByte)
-	Check(err)
-
-	cmd := exec.Command("/bin/sh", f.Name())
-
-	err = cmd.Start()
-	Check(err)
-
-	err = cmd.Wait()
 	if err != nil {
 		return err
 	}
 
-	return nil
+	cmd := exec.Command("/bin/sh", f.Name())
+
+	err = cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	return cmd.Wait()
 }
 
-func (p *ZshPlugin) installZshrc() {
-	p.CreateConfigs()
+func (p *ZshPlugin) installZshrc() error {
+	return p.CreateConfigs()
 }
 
-func (p *ZshPlugin) installPowerline() {
-	fullPath := p.BuildDestWithFile(zshPath)
+func (p *ZshPlugin) installPowerline(destDir string) error {
+	fullPath := p.buildDestPath(destDir, zshPath)
 	fullPath = filepath.Join(fullPath, "/custom/themes/powerlevel10k")
 
 	if _, err := os.Stat(fullPath); err == nil {
 		fmt.Printf("%v file already exists\n", fullPath)
-		return
+		return nil
 	}
 
 	cmd := exec.Command("/usr/bin/git", "clone", "--depth=1", powerlineurl, fullPath)
 
 	err := cmd.Start()
-	Check(err)
+	if err != nil {
+		return err
+	}
 
-	err = cmd.Wait()
-	Check(err)
-
+	return cmd.Wait()
 }

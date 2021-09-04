@@ -21,49 +21,51 @@ type VimPlugin struct {
 	*PluginData
 }
 
-func NewVimPlugin(destDir string, overwrite bool) Installer {
+func NewVimPlugin() Installer {
+	return &VimPlugin{&PluginData{
+		Name: "vim",
+	}}
+}
 
-	plugin := &PluginData{
-		Name:         "vim",
-		DestFilesDir: destDir,
+func (p *VimPlugin) Install(destDir string, overwrite bool) error {
+	p.AddConfigToCreate(&vimrc, p.buildDestPath(destDir, ".vimrc"), overwrite)
+
+	err := p.installVimrc()
+	if err != nil {
+		return err
 	}
 
-	vp := &VimPlugin{plugin}
-
-	vp.AddConfigToCreate(&vimrc, ".vimrc", overwrite)
-
-	return vp
+	return p.installVimPlug(destDir)
 }
 
-func (p VimPlugin) Install() {
-	p.installVimrc()
-	p.installVimPlug()
+func (p VimPlugin) installVimrc() error {
+	return p.CreateConfigs()
 }
 
-func (p VimPlugin) installVimrc() {
-	p.CreateConfigs()
-}
-
-func (p VimPlugin) installVimPlug() {
-	vimPlugPath := p.BuildDestWithFile(vimPlugDestFile)
+func (p VimPlugin) installVimPlug(destDir string) error {
+	vimPlugPath := p.buildDestPath(destDir, vimPlugDestFile)
 
 	if _, err := os.Stat(vimPlugPath); err == nil {
 		fmt.Printf("%v file already exists\n", vimPlugPath)
-		return
+		return nil
 	}
 
 	pathSlice := strings.Split(vimPlugPath, "/")
 	path := strings.Join(pathSlice[0:len(pathSlice)-1], "/")
 
 	err := os.MkdirAll(path, os.ModePerm)
-	Check(err)
+	if err != nil {
+		return err
+	}
 
 	installByte := DownloadFile(vimPlugUrl)
 
 	f, err := os.Create(vimPlugPath)
-	Check(err)
+	if err != nil {
+		return err
+	}
 	defer f.Close()
 
 	_, err = f.Write(installByte)
-	Check(err)
+	return err
 }
