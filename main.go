@@ -29,8 +29,7 @@ func main() {
 		Overwrite:   overwrite,
 	}
 
-	err := r.Go()
-	if err != nil {
+	if err := r.Go(); err != nil {
 		panic(err)
 	}
 }

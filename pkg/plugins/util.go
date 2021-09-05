@@ -22,8 +22,7 @@ func (p *PluginData) AddConfigToCreate(source *string, to string, overwrite bool
 
 func (p *PluginData) CreateConfigs() error {
 	for _, ctc := range p.Configs {
-		err := ctc.Create()
-		if err != nil {
+		if err := ctc.Create(); err != nil {
 			return err
 		}
 	}
@@ -39,8 +38,7 @@ func (ctc ConfigToCreate) Create() error {
 			return nil
 		}
 
-		err := ctc.Backup()
-		if err != nil {
+		if err := ctc.Backup(); err != nil {
 			return err
 		}
 	}

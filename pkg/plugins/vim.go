@@ -30,8 +30,7 @@ func NewVimPlugin() Installer {
 func (p *VimPlugin) Install(destDir string, overwrite bool) error {
 	p.AddConfigToCreate(&vimrc, p.buildDestPath(destDir, ".vimrc"), overwrite)
 
-	err := p.installVimrc()
-	if err != nil {
+	if err := p.installVimrc(); err != nil {
 		return err
 	}
 
@@ -53,8 +52,7 @@ func (p VimPlugin) installVimPlug(destDir string) error {
 	pathSlice := strings.Split(vimPlugPath, "/")
 	path := strings.Join(pathSlice[0:len(pathSlice)-1], "/")
 
-	err := os.MkdirAll(path, os.ModePerm)
-	if err != nil {
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
 		return err
 	}
 

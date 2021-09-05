@@ -35,13 +35,11 @@ func (p *ZshPlugin) Install(destDir string, overwrite bool) error {
 	p.AddConfigToCreate(&zshrc, p.buildDestPath(destDir, ".zshrc"), overwrite)
 	p.AddConfigToCreate(&p10kzsh, p.buildDestPath(destDir, ".p10k.zsh"), overwrite)
 
-	err := p.installOhMyZSH(destDir)
-	if err != nil {
+	if err := p.installOhMyZSH(destDir); err != nil {
 		return err
 	}
 
-	err = p.installZshrc()
-	if err != nil {
+	if err := p.installZshrc(); err != nil {
 		return err
 	}
 
@@ -73,8 +71,7 @@ func (p *ZshPlugin) installOhMyZSH(destDir string) error {
 
 	cmd := exec.Command("/bin/sh", f.Name())
 
-	err = cmd.Start()
-	if err != nil {
+	if err = cmd.Start(); err != nil {
 		return err
 	}
 

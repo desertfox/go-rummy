@@ -23,8 +23,7 @@ func (r *Rummy) Go() error {
 	}
 
 	for _, plugin := range *plugins {
-		err := plugin.Install(r.DestDir, r.Overwrite)
-		if err != nil {
+		if err := plugin.Install(r.DestDir, r.Overwrite); err != nil {
 			return err
 		}
 	}
