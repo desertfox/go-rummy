@@ -14,4 +14,8 @@ plugins=(git golang alias-finder z wd)
 
 source $ZSH/oh-my-zsh.sh
 
+if [ -f $HOME/.bash_aliases ]; then
+  source $HOME/.bash_aliases
+fi
+
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

@@ -15,7 +15,7 @@ var (
 
 func init() {
 	flag.StringSliceVar(&installList, "i", []string{"all"}, "Install")
-	flag.BoolVar(&overwrite, "o", false, "Source path/dir for dot files")
+	flag.BoolVar(&overwrite, "o", false, "Overwrite")
 }
 
 func main() {
