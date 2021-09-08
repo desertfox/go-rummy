@@ -1,20 +1,30 @@
 package main
 
 import (
+	"flag"
 	"os"
-
-	flag "github.com/spf13/pflag"
 
 	"github.com/go-rummy/pkg"
 )
 
+type installList []string
+
 var (
-	installList []string
-	overwrite   bool
+	appList   installList
+	overwrite bool
 )
 
+func (i *installList) String() string {
+	return ""
+}
+
+func (i *installList) Set(app string) error {
+	*i = append(*i, app)
+	return nil
+}
+
 func init() {
-	flag.StringSliceVar(&installList, "i", []string{"all"}, "Install")
+	flag.Var(&appList, "i", "Install")
 	flag.BoolVar(&overwrite, "o", false, "Overwrite")
 }
 
@@ -23,8 +33,12 @@ func main() {
 
 	home := os.Getenv("HOME")
 
+	if appList == nil {
+		appList = installList{"all"}
+	}
+
 	r := &rummy.Rummy{
-		InstallList: installList,
+		InstallList: appList,
 		DestDir:     home,
 		Overwrite:   overwrite,
 	}
